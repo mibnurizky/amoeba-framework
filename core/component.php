@@ -5,6 +5,7 @@ class Component{
         $CModel = new Model();
         $CCache = new Cache();
         $CDatabase = new Database();
+        $CComponent = new Component();
         if(empty($component)){
             $component = $app->default_component;
         }
@@ -22,11 +23,11 @@ class Component{
     }
     public function includeView($view='',$data=array(),$return=false){
         $view = str_replace('.','/',$view);
-        $view = ROOT_PATH.'/views/'.$view.'.php';
-        if(file_exists($component_file)){
+        $view_file = ROOT_PATH.'/views/'.$view.'.php';
+        if(file_exists($view_file)){
             ob_start();
             extract($data);
-            include $component_file;
+            include $view_file;
             $viewcontent = ob_get_contents();
             ob_end_clean();
             if($return){
