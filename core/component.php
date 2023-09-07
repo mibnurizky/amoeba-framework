@@ -6,6 +6,7 @@ class Component{
         $CCache = new Cache();
         $CDatabase = new Database();
         $CComponent = new Component();
+        $CSession = new Session();
         if(empty($component)){
             $component = $app->default_component;
         }

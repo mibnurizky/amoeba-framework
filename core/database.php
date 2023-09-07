@@ -11,6 +11,13 @@ class Database{
 
     public function __construct($instance='default'){
         $this->instace = $instance;
+        $connection = $this->connectionlist();
+        $this->driver = $connection['driver'];
+        $this->host = $connection['host'];
+        $this->port = $connection['port'];
+        $this->dbname = $connection['dbname'];
+        $this->username = $connection['username'];
+        $this->password = $connection['password'];
     }
 
     public function connectionlist(){
@@ -19,7 +26,7 @@ class Database{
                 'driver'        => 'mysql',
                 'host'          => 'localhost',
                 'port'          => '3307',
-                'dbname'        => 'bitrix_kag',
+                'dbname'        => 'framework',
                 'username'      => 'root',
                 'password'      => 'annonymous'
             )
@@ -29,14 +36,6 @@ class Database{
     }
 
     public function connect(){
-        $connection = $this->connectionlist();
-        $this->driver = $connection['driver'];
-        $this->host = $connection['host'];
-        $this->port = $connection['port'];
-        $this->dbname = $connection['dbname'];
-        $this->username = $connection['username'];
-        $this->password = $connection['password'];
-
         try{
             $conn = new PDO($this->driver.':host='.$this->host.'; port='.$this->port.'; dbname='.$this->dbname,$this->username,$this->password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
