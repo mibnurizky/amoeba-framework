@@ -1,6 +1,6 @@
 <?php
 class Component{
-    public function includeComponent($component=''){
+    public function includeComponent($component='',$direct=true){
         $app = new App();
         $CModel = new Model();
         $CCache = new Cache();
@@ -18,8 +18,10 @@ class Component{
             include $component_file;
         }
         else{
-            echo "Page Not Found";
-            exit();
+            if($direct){
+                $this->redirect('error.404');
+                exit();
+            }
         }
     }
     public function includeView($view='',$data=array(),$return=false){
@@ -39,10 +41,10 @@ class Component{
             }
         }
     }
-    public function redirect($component,$parameters=array()){
+    public function redirect($component,$parameters=array(),$response_code=0){
         $parameters['c'] = $component;
         $query = http_build_query($parameters);
-        header('Location: ?'.$query);
+        header('Location: ?'.$query,true,$response_code);
         exit();
     }
 }
