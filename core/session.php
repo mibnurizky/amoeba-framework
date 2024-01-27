@@ -16,7 +16,7 @@ class Session{
         else{
             $sessid = $this->prefix.time().'_'.random_characters(10);
             $this->sessid = $sessid;
-            setcookie($this->prefix.'cookie',$this->sessid);
+            setcookie($this->prefix.'cookie',$this->sessid,['httponly' => true, 'secure' => true, 'samesite'=>'Strict']);
         }
     }
 
@@ -28,14 +28,14 @@ class Session{
             $session = $db->select("SELECT * FROM ".$this->table." WHERE ID = '".$this->sessid."'");
             $sessiondata = array();
             if(count($session) > 0){
-                $sessiondata = unserialize($session[0]['SESSION_DATA']);
+                $sessiondata = unserialize(getDecrypt($session[0]['SESSION_DATA']));
                 $sessiondata = array_merge($sessiondata,[$id => $data]);
-                $db->update($this->table,['SESSION_DATA' => serialize($sessiondata)],"WHERE ID = '".$this->sessid."'");
+                $db->update($this->table,['SESSION_DATA' => setEncrypt(serialize($sessiondata))],"WHERE ID = '".$this->sessid."'");
             }
             else{
                 $db->insert($this->table,array(
                     'ID' => $this->sessid,
-                    'SESSION_DATA' => serialize([$id => $data]),
+                    'SESSION_DATA' => setEncrypt(serialize([$id => $data])),
                     'CREATED_TIME' => time()
                 ));
             }
@@ -53,7 +53,7 @@ class Session{
             $this->session_db_check_table();
             $session = $db->select("SELECT * FROM ".$this->table." WHERE ID = '".$this->sessid."'");
             if(count($session) > 0){
-                $sessiondata = unserialize($session[0]['SESSION_DATA']);
+                $sessiondata = unserialize(getDecrypt($session[0]['SESSION_DATA']));
                 return isset($sessiondata[$id]) ? $sessiondata[$id] : "";
             }
         }
@@ -69,9 +69,9 @@ class Session{
             $this->session_db_check_table();
             $session = $db->select("SELECT * FROM ".$this->table." WHERE ID = '".$this->sessid."'");
             if(count($session) > 0){
-                $sessiondata = unserialize($session[0]['SESSION_DATA']);
+                $sessiondata = unserialize(getDecrypt($session[0]['SESSION_DATA']));
                 unset($sessiondata[$id]);
-                $db->update($this->table,['SESSION_DATA' => serialize($sessiondata)],"WHERE ID = '".$this->sessid."'");
+                $db->update($this->table,['SESSION_DATA' => setEncrypt(serialize($sessiondata))],"WHERE ID = '".$this->sessid."'");
             }
         }
         else{
@@ -129,8 +129,8 @@ class Session{
                 DEFAULT CHARSET=utf8
                 COLLATE=utf8_unicode_ci
             ");
-            $db->query("CREATE INDEX `_amoeba_session_IP_ADDRESS_IDX` USING BTREE ON framework.`_amoeba_session` (IP_ADDRESS)");
-            $db->query("CREATE INDEX `_amoeba_session_IS_EXPIRED_IDX` USING BTREE ON framework.`_amoeba_session` (IS_EXPIRED)");
+            $db->query("CREATE INDEX `_amoeba_session_IP_ADDRESS_IDX` USING BTREE ON `_amoeba_session` (IP_ADDRESS)");
+            $db->query("CREATE INDEX `_amoeba_session_IS_EXPIRED_IDX` USING BTREE ON `_amoeba_session` (IS_EXPIRED)");
             $cache->save('__amoeba_session_table__',true,604800);
         }
         else{
