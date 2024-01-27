@@ -79,6 +79,30 @@ class Session{
         }
     }
 
+
+    public function merge($id,$data){
+        $exist = $this->get($id);
+        if(!empty($exist)){
+            if(is_array($exist)){
+                if(is_array($data)){
+                    $exist = array_merge($exist,$data);
+                    $this->set($id,$exist);
+                }
+                else{
+                    $exist[] = $data;
+                    $this->set($id,$data);
+                }
+            }
+            else{
+                $this->set($id,$data);
+            }
+        }
+        else{
+            $this->set($id,$data);
+        }
+    }
+
+
     public function session_db_check_table(){
         $db = new Database();
         $cache = new Cache();

@@ -1,5 +1,5 @@
 <?php
 
-$CSession->set('oke','siap');
+COMPONENT->includeView('testing');
 
 ?>
