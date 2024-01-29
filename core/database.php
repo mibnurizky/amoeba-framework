@@ -21,27 +21,21 @@ class Database{
     }
 
     public function connectionlist(){
-        $connection = array(
-            'default' => array(
-                'driver'        => 'mysql',
-                'host'          => 'localhost',
-                'port'          => '3307',
-                'dbname'        => 'framework',
-                'username'      => 'root',
-                'password'      => 'annonymous'
-            )
-        );
+        include ROOT_PATH.'/config/database.php';
 
         return $connection[$this->instace];
     }
 
-    public function connect(){
+    public function connect($return=false){
         try{
             $conn = new PDO($this->driver.':host='.$this->host.'; port='.$this->port.'; dbname='.$this->dbname,$this->username,$this->password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $conn;
         }
         catch(PDOException $e){
+            if($return){
+                return false;
+            }
             echo "Connection error ".$e->getMessage();
             exit;
         }
@@ -52,20 +46,29 @@ class Database{
         return $data;
     }
 
-    public function query($sql,$parameters=array()){
+    public function query($sql,$parameters=array(),&$lasterror=""){
         $conn = $this->connect();
-        $query = $conn->prepare($sql);
-        $query->execute((count($parameters) > 0 ? $parameters : null));
-        return $query;
+        try{
+            $query = $conn->prepare($sql);
+            $query->execute((count($parameters) > 0 ? $parameters : null));
+            return $query;
+        }
+        catch(PDOException $e){
+            $lasterror = $e->getMessage();
+            return false;
+        }
     }
 
-    public function select($sql, $parameters=array()){
-        $data = $this->query($sql,$parameters);
+    public function select($sql, $parameters=array(),&$lasterror=""){
+        $data = $this->query($sql,$parameters,$lasterror);
+        if(!$data){
+            return false;
+        }
         $arData = $data->fetchAll(PDO::FETCH_ASSOC);
         return $arData;
     }
 
-    public function insert($table,$fields){
+    public function insert($table,$fields,&$lasterror=""){
         $fields_db = $this->getFields($table);
         $arFields = array();
         foreach($fields_db as $row){
@@ -85,14 +88,14 @@ class Database{
 
         if(count($arKey) > 0){
             $sql = "INSERT INTO ".$table." (".implode(",",$arKey).") VALUES (".implode(",",$arValue).")";
-            return $this->query($sql,$arParams,$index);
+            return $this->query($sql,$arParams,$lasterror);
         }
         else{
             return false;
         }
     }
 
-    public function update($table,$fields,$where,$parameters=array()){
+    public function update($table,$fields,$where,$parameters=array(),&$lasterror=""){
         $fields_db = $this->getFields($table);
         $arFields = array();
         foreach($fields_db as $row){
@@ -114,7 +117,7 @@ class Database{
 
         if(count($arValueField) > 0){
             $sql = "UPDATE ".$table." SET ".implode(",",$arValueField)." ".$where;
-            return $this->query($sql,$arParams,$index);
+            return $this->query($sql,$arParams,$lasterror);
         }
         else{
             return false;
@@ -122,9 +125,9 @@ class Database{
 
     }
 
-    public function delete($table,$where,$parameters=array()){
+    public function delete($table,$where,$parameters=array(),&$lasterror=""){
         $sql = "UPDATE ".$table." SET ".implode(",",$arValueField)." ".$where;
-        return $this->query($sql,$parameters);
+        return $this->query($sql,$parameters,$lasterror);
     }
 }
 ?>
