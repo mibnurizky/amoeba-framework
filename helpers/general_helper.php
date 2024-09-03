@@ -26,5 +26,10 @@ function getDecrypt($string,$secret_key='74j5f3d'){
 
     return $output;
 }
+function responseJSON($response){
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    die();
+}
 
 ?>

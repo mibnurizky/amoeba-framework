@@ -20,4 +20,10 @@ function random_number($length = 10) {
     return $randomString;
 }
 
+function generateID()
+{
+    $date = new DateTime();
+    return $date->format('YmdHisu') . random_characters(5);
+}
+
 ?>
