@@ -57,7 +57,7 @@ define('EXECUTION',$CExecution);
 define('MIDDLEWARE',$CMiddleware);
 
 if(empty($_GET['c'])){
-    $CComponent->redirect('auth.login');
+    $CComponent->redirect($CApp->default_component);
 }
 
 EXECUTION->start('GENERAL');

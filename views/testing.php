@@ -1,3 +1,3 @@
 <?php
-echo "keren abies";
+echo "Amoeba Framework v0.1";
 ?>
