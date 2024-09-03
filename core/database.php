@@ -38,6 +38,7 @@ class Database{
             $this->dbname = $connection['dbname'];
             $this->username = $connection['username'];
             $this->password = $connection['password'];
+            return true;
         }
         else{
             return false;
