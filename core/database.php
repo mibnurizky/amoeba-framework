@@ -26,6 +26,24 @@ class Database{
         return $connection[$this->instace];
     }
 
+    public function setInstance($instance){
+        include ROOT_PATH.'/config/database.php';
+
+        if(array_key_exists($instance,$connection)){
+            $this->instace = $instance;
+            $connection = $this->connectionlist();
+            $this->driver = $connection['driver'];
+            $this->host = $connection['host'];
+            $this->port = $connection['port'];
+            $this->dbname = $connection['dbname'];
+            $this->username = $connection['username'];
+            $this->password = $connection['password'];
+        }
+        else{
+            return false;
+        }
+    }
+
     public function connect($return=false){
         try{
             $conn = new PDO($this->driver.':host='.$this->host.'; port='.$this->port.'; dbname='.$this->dbname,$this->username,$this->password);
