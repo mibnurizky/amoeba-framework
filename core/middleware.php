@@ -43,7 +43,7 @@ class Middleware{
         }
     }
     public function runMiddlewareGeneral($run='before'){
-        $middleware_file = ROOT_PATH.'/middleware/.default.php';
+        $middleware_file = ROOT_PATH.'/middleware/.general.php';
         if(file_exists($middleware_file)){
             include $middleware_file;
 

@@ -36,7 +36,7 @@ include_once ROOT_PATH.'/core/execution.php';
 include_once ROOT_PATH.'/core/middleware.php';
 
 /** Bootstrap */
-global $CComponent,$CApp,$CDatabase,$CModel;
+global $CComponent,$CApp,$CDatabase,$CModel,$CCache,$CSession,$CExecution,$CMiddleware;
 $CComponent = new Component();
 $CApp = new App();
 $CDatabase = new Database();
