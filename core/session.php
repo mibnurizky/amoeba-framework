@@ -79,6 +79,18 @@ class Session{
         }
     }
 
+    public function flash_set($key,$data){
+        $key = 'amoeba_flash_'.$key;
+        $this->set($key,$data);
+        return true;
+    }
+
+    public function flash_get($key){
+        $key = 'amoeba_flash_'.$key;
+        $data = $this->get($key);
+        $this->del($key);
+        return $data;
+    }
 
     public function merge($id,$data){
         $exist = $this->get($id);

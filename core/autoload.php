@@ -5,6 +5,9 @@ session_start();
 /** Define */
 define('ROOT_PATH',$_SERVER['DOCUMENT_ROOT']);
 
+/** Composer */
+require_once ROOT_PATH.'/core/vendor/autoload.php';
+
 /** Include Helper */
 foreach (glob(ROOT_PATH.'/helpers/*.php') as $filename)
 {
@@ -35,6 +38,9 @@ include_once ROOT_PATH.'/core/execution.php';
 /** Include Middleware */
 include_once ROOT_PATH.'/core/middleware.php';
 
+/** Include Language */
+include_once ROOT_PATH.'/core/language.php';
+
 /** Bootstrap */
 global $CComponent,$CApp,$CDatabase,$CModel,$CCache,$CSession,$CExecution,$CMiddleware;
 $CComponent = new Component();
@@ -42,9 +48,10 @@ $CApp = new App();
 $CDatabase = new Database();
 $CModel = new Model();
 $CCache = new Cache();
-$CSession = new Session();
+$CSession = new Session(true);
 $CExecution = new Execution();
 $CMiddleware = new Middleware();
+$CLanguage = new Language();
 
 /** Defined */
 define('COMPONENT',$CComponent);
@@ -55,6 +62,16 @@ define('CACHE',$CCache);
 define('SESSION',$CSession);
 define('EXECUTION',$CExecution);
 define('MIDDLEWARE',$CMiddleware);
+define('LANGUAGE',$CLanguage);
+$GLOBALS['COMPONENT'] = $CComponent;
+$GLOBALS['APP'] = $CApp;
+$GLOBALS['DATABASE'] = $CDatabase;
+$GLOBALS['MODEL'] = $CModel;
+$GLOBALS['CACHE'] = $CCache;
+$GLOBALS['SESSION'] = $CSession;
+$GLOBALS['EXECUTION'] = $CExecution;
+$GLOBALS['MIDDLEWARE'] = $CMiddleware;
+$GLOBALS['LANGUAGE'] = $CLanguage;
 
 $path = ltrim($_SERVER['REQUEST_URI'], '/');
 $explode = explode('/',$path);

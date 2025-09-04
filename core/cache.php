@@ -1,7 +1,7 @@
 <?php
 class Cache{
 
-    private $cache_dir = ROOT_PATH.'/cache';
+    private $cache_dir = ROOT_PATH.'/writepath/cache';
 
 
     public function __construct(array $options = array())

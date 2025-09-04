@@ -145,7 +145,7 @@ class Database{
     }
 
     public function delete($table,$where,$parameters=array(),&$lasterror=""){
-        $sql = "UPDATE ".$table." SET ".implode(",",$arValueField)." ".$where;
+        $sql = "DELETE FROM ".$table." ".$where;
         return $this->query($sql,$parameters,$lasterror);
     }
 }
