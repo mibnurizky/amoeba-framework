@@ -18,6 +18,9 @@ class Component{
 
             include $component_file;
 
+            if(!isset($arResult)){
+                $arResult = array();
+            }
             $MIDDLEWARE->runMiddleware($middleware,'after',$arResult);
 
         }

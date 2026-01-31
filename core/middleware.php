@@ -43,49 +43,51 @@ class Middleware{
             }
         }
     }
-    public function runMiddlewareGeneral($run='before',$component){
+    public function runMiddlewareGeneral($run='before',$component=''){
         global $COMPONENT;
 
         $middleware_file = ROOT_PATH.'/middleware/.general.php';
         if(file_exists($middleware_file)){
             include $middleware_file;
 
-            foreach($middleware_default as $key => $row){
-                $exclude = array();
-                $include = array();
-                if(!empty($row['exclude'])){
-                    $exclude = (!is_array($row['exclude']) ? [$row['exclude']] : $row['exclude']);
-                    $arExclude = array();
-                    foreach($exclude as $key_exclude => $row_exclude){
-                        if(!empty($row_exclude) AND $COMPONENT->isComponent($row_exclude)){
-                            $arExclude[] = $row_exclude;
+            if(isset($middleware_default)){
+                foreach($middleware_default as $key => $row){
+                    $exclude = array();
+                    $include = array();
+                    if(!empty($row['exclude'])){
+                        $exclude = (!is_array($row['exclude']) ? [$row['exclude']] : $row['exclude']);
+                        $arExclude = array();
+                        foreach($exclude as $key_exclude => $row_exclude){
+                            if(!empty($row_exclude) AND COMPONENT->isComponent($row_exclude)){
+                                $arExclude[] = $row_exclude;
+                            }
                         }
+                        $exclude = $arExclude;
                     }
-                    $exclude = $arExclude;
-                }
-                if(!empty($row['include'])){
-                    $include = (!is_array($row['include']) ? [$row['include']] : $row['include']);
-                    $arInclude = array();
-                    foreach($include as $key_include => $row_include){
-                        if(!empty($row_include) AND $COMPONENT->isComponent($row_include)){
-                            $arInclude[] = $row_include;
+                    if(!empty($row['include'])){
+                        $include = (!is_array($row['include']) ? [$row['include']] : $row['include']);
+                        $arInclude = array();
+                        foreach($include as $key_include => $row_include){
+                            if(!empty($row_include) AND COMPONENT->isComponent($row_include)){
+                                $arInclude[] = $row_include;
+                            }
                         }
+                        $include = $arInclude;
                     }
-                    $include = $arInclude;
-                }
 
-                if(!empty($include)){
-                    if(in_array($component,$include) AND $COMPONENT->isComponent($component)){
-                        $this->runMiddleware($key,$run);
-                    }
-                }
-                else{
-                    if(in_array($component,$exclude)){
-
+                    if(!empty($include)){
+                        if(in_array($component,$include) AND COMPONENT->isComponent($component)){
+                            $this->runMiddleware($key,$run);
+                        }
                     }
                     else{
-                        if($COMPONENT->isComponent($component)){
-                            $this->runMiddleware($key,$run);
+                        if(in_array($component,$exclude)){
+
+                        }
+                        else{
+                            if($COMPONENT->isComponent($component)){
+                                $this->runMiddleware($key,$run);
+                            }
                         }
                     }
                 }

@@ -9,6 +9,10 @@ $app_config = array(
     'default_language' => 'en',
     'csrf_key' => '&yw?gS8.!*De7&,n:X!?c.+;Kszm=gyFbA3',
     'rewrite' => true,
+    'debug' => true,
+    'display_errors' => true,
+    'log_errors' => true,
+    'error_reporting' => E_ALL,
     'smtp' => array(
         'host' => 'smtp.gmail.com',
         'port' => 587,

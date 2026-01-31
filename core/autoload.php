@@ -5,6 +5,38 @@ session_start();
 /** Define */
 define('ROOT_PATH',$_SERVER['DOCUMENT_ROOT']);
 
+require_once ROOT_PATH . '/config/app.php';
+
+if (!empty($app_config['debug'])) {
+    ini_set('display_errors', $app_config['display_errors'] ? '1' : '0');
+    ini_set('display_startup_errors', '1');
+    error_reporting($app_config['error_reporting']);
+} else {
+    ini_set('display_errors', '0');
+    ini_set('display_startup_errors', '0');
+    error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+}
+
+set_exception_handler(function ($e) use ($app_config) {
+    if (!empty($app_config['debug'])) {
+        echo "<pre>";
+        echo "Uncaught Exception:\n";
+        echo get_class($e).": ".$e->getMessage()."\n";
+        echo $e->getFile().":".$e->getLine()."\n\n";
+        echo $e->getTraceAsString();
+        echo "</pre>";
+    } else {
+        http_response_code(500);
+        echo "Internal Server Error";
+    }
+});
+
+set_error_handler(function ($severity, $message, $file, $line) use ($app_config) {
+    if (!empty($app_config['debug'])) {
+        echo "<pre>PHP Error: $message\n$file:$line</pre>";
+    }
+});
+
 /** Composer */
 require_once ROOT_PATH.'/core/vendor/autoload.php';
 
@@ -45,6 +77,7 @@ $CCache = new \Amoeba\Core\Cache();
 $CSession = new \Amoeba\Core\Session(true);
 $CExecution = new \Amoeba\Core\Execution();
 $CMiddleware = new \Amoeba\Core\Middleware();
+$CLanguage = new \Amoeba\Core\Language();
 
 /** Defined */
 define('COMPONENT',$CComponent);
