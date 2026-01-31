@@ -1,4 +1,5 @@
 <?php
+namespace Amoeba\Core;
 class App{
     public $default_component            = '';
     public $config                       = array();

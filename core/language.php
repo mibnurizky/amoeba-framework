@@ -1,5 +1,5 @@
 <?php
-
+namespace Amoeba\Core;
 class Language{
     public $lang = [];
     public $lang_path = "";

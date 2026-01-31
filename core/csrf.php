@@ -1,5 +1,5 @@
 <?php
-// Csrf.php
+namespace Amoeba\Core;
 class Csrf
 {
     private string $secret;     // set dari env/config

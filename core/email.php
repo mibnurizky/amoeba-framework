@@ -1,5 +1,5 @@
 <?php
-
+namespace Amoeba\Core;
 class Email
 {
     private $smtp_host = null;

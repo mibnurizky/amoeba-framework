@@ -14,55 +14,37 @@ foreach (glob(ROOT_PATH.'/helpers/*.php') as $filename)
     include_once $filename;
 }
 
-/** Include Database */
-include_once ROOT_PATH.'/core/database.php';
 
-/** Include Cache */
-include_once ROOT_PATH.'/core/cache.php';
+spl_autoload_register(function ($class) {
 
-/** Include App Config */
-include_once ROOT_PATH.'/core/app.php';
+    $prefix = 'Amoeba\\';
+    $baseDir = ROOT_PATH.'/';
 
-/** Include Component */
-include_once ROOT_PATH.'/core/session.php';
+    if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
+        return;
+    }
 
-/** Include Component */
-include_once ROOT_PATH.'/core/component.php';
+    $relativeClass = substr($class, strlen($prefix));
+    $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+    if(!is_file($file)){
+        $file = $baseDir . str_replace('\\', '/', strtolower($relativeClass)) . '.php';
+    }
 
-/** Include Model */
-include_once ROOT_PATH.'/core/model.php';
-
-/** Include Model */
-include_once ROOT_PATH.'/core/execution.php';
-
-/** Include Middleware */
-include_once ROOT_PATH.'/core/middleware.php';
-
-/** Include Language */
-include_once ROOT_PATH.'/core/language.php';
-
-/** Include CSRF */
-include_once ROOT_PATH.'/core/csrf.php';
-
-/** Include Limiter */
-include_once ROOT_PATH.'/core/limiter.php';
-
-/** Include Email */
-include_once ROOT_PATH.'/core/email.php';
-
-/** SSP Datatable */
-include_once ROOT_PATH.'/core/ssp.php';
+    if (is_file($file)) {
+        require_once $file;
+    }
+});
 
 /** Bootstrap */
 global $CComponent,$CApp,$CDatabase,$CModel,$CCache,$CSession,$CExecution,$CMiddleware;
-$CComponent = new Component();
-$CApp = new App();
-$CDatabase = new Database();
-$CModel = new Model();
-$CCache = new Cache();
-$CSession = new Session(true);
-$CExecution = new Execution();
-$CMiddleware = new Middleware();
+$CComponent = new \Amoeba\Core\Component();
+$CApp = new \Amoeba\Core\App();
+$CDatabase = new \Amoeba\Core\Database();
+$CModel = new \Amoeba\Core\Model();
+$CCache = new \Amoeba\Core\Cache();
+$CSession = new \Amoeba\Core\Session(true);
+$CExecution = new \Amoeba\Core\Execution();
+$CMiddleware = new \Amoeba\Core\Middleware();
 
 /** Defined */
 define('COMPONENT',$CComponent);
@@ -122,6 +104,7 @@ else{
 }
 
 if($CApp->config['rewrite']){
+    $pathfix = str_replace('-','.',$explode[0]);
     $CComponent->includeComponent($explode[0]);
 }
 else{

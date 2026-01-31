@@ -1,4 +1,6 @@
 <?php
+namespace Amoeba\Core;
+
 class Model{
     public function includeModel($model=''){
         $model = str_replace('.','/',$model);

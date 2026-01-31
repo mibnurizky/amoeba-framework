@@ -1,4 +1,5 @@
 <?php
+namespace Amoeba\Core;
 class Database{
 
     public $driver      = 'mysql';

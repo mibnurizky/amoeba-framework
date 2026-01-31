@@ -1,5 +1,5 @@
 <?php
-
+namespace Amoeba\Core;
 class Limiter{
     private $prefix = 'limiter_';
     private $cache_ttl = 2592000;

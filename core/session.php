@@ -1,5 +1,5 @@
 <?php
-
+namespace Amoeba\Core;
 class Session{
 
     private $prefix = '_amoeba_';

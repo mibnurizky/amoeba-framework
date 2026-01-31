@@ -1,4 +1,5 @@
 <?php
+namespace Amoeba\Core;
 class Middleware{
     public function includeMiddleware($middleware=''){
         $middleware = str_replace('.','/',$middleware);

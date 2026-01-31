@@ -1,4 +1,5 @@
 <?php
+namespace Amoeba\Core;
 class Cache{
 
     private $cache_dir = ROOT_PATH.'/writepath/cache';

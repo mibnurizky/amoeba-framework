@@ -1,4 +1,6 @@
 <?php
+namespace Amoeba\Core;
+
 class Component{
     public function includeComponent($component='',$parameters=array(),$middleware=array(),$direct=true){
         global $APP, $MODEL, $CACHE, $DATABASE, $COMPONENT, $SESSION, $EXECUTION, $MIDDLEWARE;
