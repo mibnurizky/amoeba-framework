@@ -1,6 +1,7 @@
 <?php
 namespace Amoeba\Core;
-class Limiter{
+
+class Limiter {
     private $prefix = 'limiter_';
     private $cache_ttl = 2592000;
     private $use_session = true;
@@ -8,162 +9,83 @@ class Limiter{
     public $maxattempt = 0;
     public $decaysecond = 60;
 
-    public function __construct($key,$maxattempt,$decaysecond,$use_session=true)
-    {
-        $this->key = $this->prefix.$key;
+    public function __construct($key, $maxattempt, $decaysecond, $use_session = true) {
+        $this->key = $this->prefix . $key;
         $this->maxattempt = $maxattempt;
         $this->decaysecond = $decaysecond;
         $this->use_session = $use_session;
     }
 
-    public function hit(){
+    private function getData() {
         global $CACHE, $SESSION;
-
-        if($this->use_session){
-            $exists = $SESSION->get($this->key);
-        }
-        else{
-            $exists = $CACHE->get($this->key);
-        }
-
-        if(!empty($exists)){
-            if($this->isMaxAttempt()){
-                return false;
-            }
-            else{
-                $limit = $exists;
-                $limit['ATTEMPT'] = $limit['ATTEMPT'] + 1;
-
-                if($limit['ATTEMPT'] >= $this->maxattempt){
-                    $limit['IS_MAX_ATTEMPT'] = true;
-                    $limit['BLOCK_UNTIL'] = time() + $this->decaysecond;
-                }
-                else{
-                    $limit['IS_MAX_ATTEMPT'] = false;
-                    $limit['BLOCK_UNTIL'] = 0;
-                }
-
-                if($this->use_session){
-                    $SESSION->set($this->key,$limit);
-                }
-                else{
-                    $CACHE->save($this->key,$limit,$this->cache_ttl);
-                }
-            }
-        }
-        else{
-            $limit = array(
-                'KEY' => $this->key,
-                'ATTEMPT' => 1,
-                'IS_MAX_ATTEMPT' => ($this->maxattempt == 0 ? true : false),
-                'BLOCK_UNTIL' => ($this->maxattempt == 0 ? (time() + $this->decaysecond) : 0)
-            );
-
-            if($limit['ATTEMPT'] >= $this->maxattempt){
-                $limit['IS_MAX_ATTEMPT'] = true;
-                $limit['BLOCK_UNTIL'] = time() + $this->decaysecond;
-            }
-
-            if($this->use_session){
-                $SESSION->set($this->key,$limit);
-            }
-            else{
-                $CACHE->save($this->key,$limit,$this->cache_ttl);
-            }
-        }
-
-        return true;
+        return $this->use_session ? $SESSION->get($this->key) : $CACHE->get($this->key);
     }
 
-    public function isBlock(){
-        if($this->avaliableIn() == 0){
-            return false;
-        }
-        else{
-            return true;
+    private function saveData($data) {
+        global $CACHE, $SESSION;
+        if ($this->use_session) {
+            $SESSION->set($this->key, $data);
+        } else {
+            $CACHE->save($this->key, $data, $this->cache_ttl);
         }
     }
 
-    public function isMaxAttempt(){
+    private function deleteData() {
         global $CACHE, $SESSION;
-
-        if($this->use_session){
-            $exists = $SESSION->get($this->key);
-        }
-        else{
-            $exists = $CACHE->get($this->key);
-        }
-
-        if(!empty($exists)){
-            if($exists['IS_MAX_ATTEMPT'] OR $exists['ATTEMPT'] >= $this->maxattempt){
-                $diff = $exists['BLOCK_UNTIL'] - time();
-                if($diff >= 0){
-                    return true;
-                }
-                else{
-                    $limit = array(
-                        'KEY' => $this->key,
-                        'ATTEMPT' => 0,
-                        'IS_MAX_ATTEMPT' => ($this->maxattempt == 0 ? true : false),
-                        'BLOCK_UNTIL' => ($this->maxattempt == 0 ? (time() + $this->decaysecond) : 0)
-                    );
-                    if($this->use_session){
-                        $SESSION->set($this->key,$limit);
-                    }
-                    else{
-                        $CACHE->save($this->key,$limit,$this->cache_ttl);
-                    }
-                    return false;
-                }
-            }
-            else{
-                return false;
-            }
-        }
-        else{
-            return false;
-        }
-    }
-
-    public function avaliableIn(){
-        global $CACHE, $SESSION;
-
-        if($this->use_session){
-            $exists = $SESSION->get($this->key);
-        }
-        else{
-            $exists = $CACHE->get($this->key);
-        }
-
-        if(!empty($exists)){
-            if($this->isMaxAttempt()){
-                $diff = $exists['BLOCK_UNTIL'] - time();
-                if($diff >= 0){
-                    return $diff;
-                }
-                else{
-                    return 0;
-                }
-            }
-            else{
-                return 0;
-            }
-        }
-        else{
-            return 0;
-        }
-    }
-
-    public function reset(){
-        global $CACHE, $SESSION;
-
-        if($this->use_session){
+        if ($this->use_session) {
             $SESSION->del($this->key);
-        }
-        else{
+        } else {
             $CACHE->delete($this->key);
         }
     }
-}
 
+    public function hit() {
+        $limit = $this->getData() ?: [
+            'KEY' => $this->key,
+            'ATTEMPT' => 0,
+            'IS_MAX_ATTEMPT' => false,
+            'BLOCK_UNTIL' => 0
+        ];
+
+        if ($this->isMaxAttempt()) {
+            return false;
+        }
+
+        $limit['ATTEMPT']++;
+        if ($limit['ATTEMPT'] >= $this->maxattempt) {
+            $limit['IS_MAX_ATTEMPT'] = true;
+            $limit['BLOCK_UNTIL'] = time() + $this->decaysecond;
+        }
+
+        $this->saveData($limit);
+        return true;
+    }
+
+    public function isMaxAttempt() {
+        $limit = $this->getData();
+        if (empty($limit) || !$limit['IS_MAX_ATTEMPT']) {
+            return false;
+        }
+
+        if ($limit['BLOCK_UNTIL'] > time()) {
+            return true;
+        }
+
+        $this->reset();
+        return false;
+    }
+
+    public function availableIn() {
+        $limit = $this->getData();
+        return $limit && $this->isMaxAttempt() ? max(0, $limit['BLOCK_UNTIL'] - time()) : 0;
+    }
+
+    public function isBlock() {
+        return $this->availableIn() > 0;
+    }
+
+    public function reset() {
+        $this->deleteData();
+    }
+}
 ?>
