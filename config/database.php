@@ -6,8 +6,8 @@ $connection = array(
         'host'          => 'localhost',
         'port'          => '3306',
         'dbname'        => 'amoeba',
-        'username'      => 'root',
-        'password'      => ''
+        'username'      => 'ibnu',
+        'password'      => 'annonymous'
     )
 );
 

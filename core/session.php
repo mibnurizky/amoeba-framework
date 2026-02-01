@@ -7,9 +7,15 @@ class Session{
     private $usedb = false;
     private $sessid = '';
 
-    public function __construct($usedb=false){
+    public function __construct($usedb=''){
         $app = new App();
-        $this->usedb = $app->session_db;
+        if(is_bool($usedb)){
+            $this->usedb = $usedb;
+        }
+        else{
+            $this->usedb = $app->session_db;
+        }
+
         if($this->usedb){
             if(!empty($_COOKIE[$this->prefix.'cookie'])){
                 $this->sessid = $_COOKIE[$this->prefix.'cookie'];
@@ -232,7 +238,7 @@ class Session{
 
     private function delete_not_use(){
         $db = new Database();
-        $date = new DateTime();
+        $date = new \DateTime();
 
         $last_use = dateChange($date->format('Y-m-d H:i:s'),'-3 day',true);
         $last_use = strtotime($last_use);

@@ -68,13 +68,18 @@ class Database{
 
     public function query($sql,$parameters=array(),&$lasterror=""){
         $conn = $this->connect();
+        $execution_key = 'QUERY_'.time();
+        EXECUTION->start($execution_key);
+        EXECUTION->setBody($execution_key,$sql);
         try{
             $query = $conn->prepare($sql);
             $query->execute((count($parameters) > 0 ? $parameters : null));
+            EXECUTION->end($execution_key);
             return $query;
         }
         catch(\PDOException $e){
             $lasterror = $e->getMessage();
+            EXECUTION->end($execution_key);
             return false;
         }
     }

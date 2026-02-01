@@ -133,7 +133,7 @@ else{
     }
 }
 
-$CExecution->start('GENERAL');
+//$CExecution->start('GENERAL');
 if($CApp->config['rewrite']) {
     $GLOBALS['CURRENT_COMPONENT'] = $explode[0];
     $CMiddleware->runMiddlewareGeneral('before',$explode[0]);
@@ -157,7 +157,7 @@ if($CApp->config['rewrite']) {
 else{
     $CMiddleware->runMiddlewareGeneral('after',$_GET['c']);
 }
-$CExecution->end('GENERAL');
+//$CExecution->end('GENERAL');
 if($CApp->show_execution_time){
     echo "<pre>";
     print_r($CExecution->calculate_all());

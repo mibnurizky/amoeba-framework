@@ -20,6 +20,10 @@ $app_config = array(
         'username' => '',
         'password' => '',
         'enscryption' => 'tls'
+    ),
+    'encryption' => array(
+        'secret_iv' => 'DALdsPXxqfYzNPfl',
+        'secret_key' => 'vXTX1t0'
     )
 );
 
