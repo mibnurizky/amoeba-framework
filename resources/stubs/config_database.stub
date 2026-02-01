@@ -1,0 +1,29 @@
+<?php
+/**
+ * Database Configuration
+ */
+
+return [
+    'default' => env('DB_CONNECTION', 'mysql'),
+
+    'mysql' => [
+        'driver' => 'mysql',
+        'host' => env('DB_HOST', 'localhost'),
+        'port' => env('DB_PORT', 3306),
+        'database' => env('DB_DATABASE', 'amoeba_db'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+    ],
+
+    'sqlite' => [
+        'driver' => 'sqlite',
+        'database' => env('DB_DATABASE', database_path('app.sqlite')),
+        'prefix' => '',
+    ],
+];
+
+function database_path($path = '') {
+    return dirname(__DIR__) . '/database' . ($path ? '/' . $path : '');
+}

@@ -45,7 +45,7 @@ set_error_handler(function ($severity, $message, $file, $line) use ($app_config)
 });
 
 /** Composer */
-require_once ROOT_PATH.'/core/vendor/autoload.php';
+require_once ROOT_PATH.'/vendor/autoload.php';
 
 /** Include Helper */
 foreach (glob(ROOT_PATH.'/helpers/*.php') as $filename)

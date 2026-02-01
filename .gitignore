@@ -1,2 +1,22 @@
-/cache
-/.idea
+# Dependencies
+/vendor/
+composer.lock
+
+# Config files (don't commit sensitive data)
+/config/app.php
+/config/database.php
+
+# Cache and logs
+/writepath/cache/*
+/writepath/logs/*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db

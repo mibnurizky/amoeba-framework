@@ -1,0 +1,14 @@
+<?php
+/**
+ * Application Configuration
+ */
+
+return [
+    'APP_NAME' => 'Amoeba Application',
+    'APP_ENV' => env('APP_ENV', 'development'),
+    'APP_DEBUG' => env('APP_DEBUG', true),
+    'APP_URL' => env('APP_URL', 'http://localhost:8000'),
+    'APP_KEY' => env('APP_KEY', ''),
+    'TIMEZONE' => 'Asia/Jakarta',
+    'LANGUAGE' => 'en',
+];
